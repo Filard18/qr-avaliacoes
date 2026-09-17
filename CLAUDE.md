@@ -10,8 +10,12 @@ cliente de uma plaquinha sem reimprimir o QR.
 - Repo: `Filard18/qr-avaliacoes` (público)
 - URL da plaquinha: `https://filard18.github.io/qr-avaliacoes/?c=NNN`
 - GitHub Pages: branch `main`, pasta raiz `/`
-- Códigos existentes no JSON: `001` a `050`
-- QR codes já impressos: `001` a `050` (folha A4, com o número visível embaixo)
+- Códigos existentes no JSON: `001` a `150`
+- QR codes gerados: `001` a `150`, em `qrcodes/` (PNG) e `folha_plaquinhas_001-150.pdf`
+- O número fica **pequeno e discreto dentro do próprio QR**, canto inferior direito
+  (5x3 módulos, preto, correção de erro H). O cliente não deve ver número na
+  plaquinha — ele existe só para o vendedor identificar qual código é qual.
+  Nunca gerar QR com o número grande embaixo para a arte da plaquinha.
 
 ## Ativar uma plaquinha
 
@@ -33,6 +37,16 @@ Quando o usuário mandar código + cliente + URL do Google, ex.:
 Se os 3 dados vierem completos, executar direto sem pedir confirmação.
 Se faltar algum, perguntar só o que falta.
 
+## O campo `url` aceita qualquer link
+
+Não tem nada de Google embutido: o `index.html` só manda o celular para o que
+estiver no campo `url`. Serve para avaliação do Google, site do cliente,
+`wa.me`, Instagram, iFood, cardápio em PDF. A mesma plaquinha física pode
+mudar de finalidade só editando o JSON.
+
+Única exigência: a URL tem que começar com `https://`. Sem o protocolo,
+`location.replace` trata como caminho relativo e o redirecionamento quebra.
+
 ## Cuidados
 
 - Os arquivos precisam se chamar exatamente `index.html` e `redirects.json`
@@ -44,3 +58,5 @@ Se faltar algum, perguntar só o que falta.
   "Código não configurado ainda.".
 - `*.github.io` é bloqueado pelo proxy do ambiente remoto do Claude Code;
   não é possível testar a URL daqui, só pelo navegador do usuário.
+- Ao validar QR gerado, usar `pyzbar` (precisa de `libzbar0` via apt). O
+  `cv2.QRCodeDetector` dá falso negativo e acusa falha em QR perfeito.
