@@ -43,6 +43,9 @@
   var p = new URLSearchParams(location.search);
   // aceita ?c= e ?C= para permitir QR em maiuscula (modo alfanumerico, mais compacto)
   var bruto = p.get("c") || p.get("C") || "";
+  // ?v=1 mostra o estado da plaquinha em vez de redirecionar: serve para
+  // conferir uma plaquinha ja configurada sem sair para o site do cliente
+  var conferir = p.has("v") || p.has("V");
   var cod = bruto.trim().replace(/\D/g, "");          // so digitos
   if (cod) cod = String(parseInt(cod, 10)).padStart(3, "0");
 
@@ -77,6 +80,11 @@
       var reg = d[cod];
       var url = reg && typeof reg.url === "string" ? reg.url.trim() : "";
       if (/^https?:\/\//i.test(url)) {
+        if (conferir) {
+          elRot.textContent = "Plaquinha (conferência)";
+          mostra("Configurada e no ar", url);
+          return;
+        }
         location.replace(url);
         return;
       }

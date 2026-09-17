@@ -22,6 +22,23 @@ cliente de uma plaquinha sem reimprimir o QR.
   falha em impressão de baixa qualidade); 14 mm dá margem. Nunca reduzir abaixo
   de 13 mm com esta URL.
 
+## NFC e QR: o mesmo código
+
+A plaquinha carrega os dois leitores e os dois guardam a MESMA string:
+`https://filard18.github.io/qr-avaliacoes/?c=NNN`.
+
+O NFC nunca guarda o destino do cliente. Consequência: ativar uma plaquinha no
+`redirects.json` atualiza QR e NFC ao mesmo tempo, sem tocar no chip. Não existe
+"subir para o NFC" — não há nada a subir.
+
+O único passo físico é gravar `?c=NNN` na tag, uma vez, na montagem. Rastreado
+pelas colunas `NFC gravado` e `Montada` do Notion (manuais: são estado físico,
+o sync não mexe nelas).
+
+Se ele pedir para "gravar o NFC do cliente X", a resposta é que já está feito
+pelo cadastro no JSON — e nunca sugerir gravar a URL do cliente direto na tag,
+que é o que quebraria o sistema desse lado.
+
 ## Ativar uma plaquinha
 
 Quando o usuário mandar código + cliente + URL do Google, ex.:
@@ -37,7 +54,7 @@ Quando o usuário mandar código + cliente + URL do Google, ex.:
 
    Se a chave não existir, criar.
 4. Commit `Ativa plaquinha <codigo> - <cliente>` e push para `main`
-5. Confirmar em 1 linha: código, cliente, no ar em ~1 min
+5. Confirmar em 1 linha: código, cliente, e que QR **e** NFC já apontam para lá
 
 Se os 3 dados vierem completos, executar direto sem pedir confirmação.
 Se faltar algum, perguntar só o que falta.
@@ -169,3 +186,47 @@ mesmo com internet ruim — é assim que ele identifica a plaquinha na mão.
 Validado em Chromium via Playwright, 8 casos (`executable_path` em
 `/opt/pw-browsers/chromium-1194/chrome-linux/chrome`; o caminho sem versão não
 existe).
+
+## A plaquinha física (decidido em 17/09/2026)
+
+Tudo impresso em 3D, nada de adesivo. Base branca, 95 x 150 mm, seis elementos
+centralizados e empilhados, todos na mesma face e na mesma altura de camada —
+uma única troca de filamento (M600) pinta os seis.
+
+| Elemento | Medida | Topo (mm) |
+| --- | --- | --- |
+| "Avalie a gente" | letra 6,5 mm | 11 |
+| Google | 26 mm | 27 |
+| Símbolo NFC | 19 mm | 61 |
+| "ou escaneie" | letra 4,5 mm | 86 |
+| QR | 32 mm | 97 |
+| www.owen.com.br | letra 5 mm | 136 |
+
+Design: https://claude.ai/artifact/SpgybncKHcq55XL6dMkVLt
+
+### Limites que não se mexe
+
+- **QR em 32 mm.** 37 módulos com a borda; em 32 mm cada módulo tem 0,86 mm =
+  2 linhas de bico 0.4. Menos que isso os módulos se fundem na impressão. Foi o
+  que forçou a plaquinha a crescer: em 70 x 90 mm o QR não cabia.
+- **Texto com no mínimo 4,5 mm de altura**, gravado (sulco), não em relevo. A
+  haste de uma fonte bold tem ~altura/7; abaixo de 4,5 mm ela fica mais fina que
+  uma linha de extrusão e a letra sai quebrada. Uma versão anterior tinha texto
+  de 3,2 mm, que não imprimiria.
+- **Borda branca do QR: 1,7 mm** (2 módulos), sem textura nenhuma.
+- **Cavidade da tag:** ø 27 mm centrada atrás do símbolo NFC, 1,2 mm de plástico
+  por cima. Não colide com o QR (folga de 17 mm).
+
+### Por que a frase "Avalie a gente" existe
+
+Não é enfeite. O símbolo de aproximação é lido universalmente como "pague aqui",
+então sem uma linha dizendo para que serve a plaquinha pode passar por
+maquininha de cartão. A frase é neutra de propósito: o Google proíbe pedir nota
+alta ("avalie com 5 estrelas" viola a política e pode punir o perfil do cliente).
+
+### Cor do logo do Google
+
+Quatro cores na mesma camada exigiriam AMS/MMU ou 4 trocas manuais. A prancha
+"Uma troca de filamento" mostra a versão toda preta, que produz com um swap só.
+O logo do Google é marca registrada — eles têm material oficial de avaliação com
+regras de uso, não conferido ainda.

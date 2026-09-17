@@ -1,4 +1,4 @@
-name: Sincroniza plaquinhas com o Notion
+name: Confere o redirects.json e sincroniza com o Notion
 
 # Roda sozinho a cada alteracao no redirects.json publicada na main,
 # e tambem pode ser disparado na mao pela aba Actions.
@@ -8,6 +8,7 @@ on:
     paths:
       - redirects.json
       - scripts/sync_notion.py
+      - scripts/valida_redirects.py
       - .github/workflows/sync-notion.yml
   workflow_dispatch:
 
@@ -20,6 +21,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      # roda antes do sync: um JSON invalido derruba TODAS as plaquinhas de
+      # uma vez, entao o aviso tem que chegar rapido - e nao faz sentido
+      # sincronizar um arquivo quebrado com o Notion
+      - name: Conferir o redirects.json
+        run: python3 scripts/valida_redirects.py
 
       - name: Enviar destinos para o Notion
         env:
