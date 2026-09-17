@@ -2,24 +2,96 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>Redirecionando...</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Redirecionando…</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: grid; place-items: center;
+    padding: 24px; background: #ffffff; color: #17181c;
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    text-align: center;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #15171b; color: #e9eaed; }
+    .rotulo, .nota { color: #9aa0a6; }
+    .caixa { border-color: #2f3439; }
+  }
+  .caixa { border: 1px solid #e4e6e9; border-radius: 16px; padding: 32px 28px; max-width: 340px; }
+  .rotulo { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: #6b7076; margin: 0 0 6px; }
+  .cod {
+    margin: 0; font-size: 4.5rem; line-height: 1; font-weight: 800; letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .msg { margin: 18px 0 0; font-size: 1rem; font-weight: 600; }
+  .nota { margin: 8px 0 0; font-size: 0.88rem; color: #6b7076; }
+  .oculto { display: none; }
+</style>
 </head>
 <body>
-<p id="msg">Redirecionando...</p>
+<div class="caixa">
+  <p class="rotulo" id="rotulo">Plaquinha</p>
+  <p class="cod" id="cod">—</p>
+  <p class="msg" id="msg">Abrindo…</p>
+  <p class="nota" id="nota"></p>
+</div>
 <script>
-const c = new URLSearchParams(location.search).get('c');
-fetch('./redirects.json?' + Date.now())
-  .then(r => r.json())
-  .then(d => {
-    if (c && d[c] && d[c].url) {
-      location.replace(d[c].url);
-    } else {
-      document.getElementById('msg').innerText = 'Código não configurado ainda.';
-    }
-  })
-  .catch(() => {
-    document.getElementById('msg').innerText = 'Erro ao carregar. Tente novamente.';
-  });
+(function () {
+  "use strict";
+  var p = new URLSearchParams(location.search);
+  // aceita ?c= e ?C= para permitir QR em maiuscula (modo alfanumerico, mais compacto)
+  var bruto = p.get("c") || p.get("C") || "";
+  var cod = bruto.trim().replace(/\D/g, "");          // so digitos
+  if (cod) cod = String(parseInt(cod, 10)).padStart(3, "0");
+
+  var elCod = document.getElementById("cod");
+  var elMsg = document.getElementById("msg");
+  var elNota = document.getElementById("nota");
+  var elRot = document.getElementById("rotulo");
+
+  function mostra(msg, nota) {
+    elMsg.textContent = msg;
+    elNota.textContent = nota || "";
+  }
+
+  if (!cod) {
+    elRot.classList.add("oculto");
+    elCod.classList.add("oculto");
+    mostra("Link incompleto", "Escaneie o QR code da plaquinha novamente.");
+    return;
+  }
+
+  // o numero aparece na hora, antes de qualquer rede: e assim que se
+  // identifica qual plaquinha e esta, mesmo sem internet boa
+  elCod.textContent = cod;
+  document.title = "Plaquinha " + cod;
+
+  fetch("./redirects.json?" + Date.now(), { cache: "no-store" })
+    .then(function (r) {
+      if (!r.ok) throw new Error("http " + r.status);
+      return r.json();
+    })
+    .then(function (d) {
+      var reg = d[cod];
+      var url = reg && typeof reg.url === "string" ? reg.url.trim() : "";
+      if (/^https?:\/\//i.test(url)) {
+        location.replace(url);
+        return;
+      }
+      if (url) {
+        mostra("Destino inválido", "O link cadastrado precisa começar com https://");
+        return;
+      }
+      mostra("Ainda não configurada", reg
+        ? "Esta plaquinha está livre. Cadastre o destino no redirects.json."
+        : "Código fora da faixa cadastrada.");
+    })
+    .catch(function () {
+      mostra("Não foi possível carregar", "Verifique a conexão e tente de novo.");
+    });
+})();
 </script>
 </body>
 </html>

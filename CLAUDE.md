@@ -11,11 +11,16 @@ cliente de uma plaquinha sem reimprimir o QR.
 - URL da plaquinha: `https://filard18.github.io/qr-avaliacoes/?c=NNN`
 - GitHub Pages: branch `main`, pasta raiz `/`
 - Códigos existentes no JSON: `001` a `150`
-- QR codes gerados: `001` a `150`, em `qrcodes/` (PNG) e `folha_plaquinhas_001-150.pdf`
-- O número fica **pequeno e discreto dentro do próprio QR**, canto inferior direito
-  (5x3 módulos, preto, correção de erro H). O cliente não deve ver número na
-  plaquinha — ele existe só para o vendedor identificar qual código é qual.
-  Nunca gerar QR com o número grande embaixo para a arte da plaquinha.
+- QR codes gerados: `001` a `150`, em `qrcodes/` (PNG) e `folha_qr_14mm_001-150.pdf`
+- Os QRs são **limpos**: nada impresso dentro nem fora. 33 módulos, correção de
+  erro M, borda de 2 módulos.
+- **Quem identifica a plaquinha é a página**, não o QR: escaneando um código
+  ainda não configurado, o `index.html` mostra o número em letra grande. Foi a
+  escolha dele em 17/09/2026, melhor que o rótulo dentro do QR — que em 14 mm
+  ficaria com 1 mm de altura.
+- Tamanho de impressão: **14 mm** de lado. O piso medido é 13 mm (abaixo disso
+  falha em impressão de baixa qualidade); 14 mm dá margem. Nunca reduzir abaixo
+  de 13 mm com esta URL.
 
 ## Ativar uma plaquinha
 
@@ -60,6 +65,15 @@ mudar de finalidade só editando o JSON.
   não é possível testar a URL daqui, só pelo navegador do usuário.
 - Ao validar QR gerado, usar `pyzbar` (precisa de `libzbar0` via apt). O
   `cv2.QRCodeDetector` dá falso negativo e acusa falha em QR perfeito.
+- O limite de um QR pequeno é o tamanho do módulo em mm, por causa do
+  espalhamento de tinta — não a resolução da câmera, que sobra em qualquer
+  celular atual. Abaixo de ~0,35 mm por módulo começa a falhar em impressão
+  ruim. Ao testar, simular espalhamento em mm e reamostrar na resolução que o
+  celular resolve; medir só em imagem digital perfeita engana.
+- Para descer abaixo de 13 mm seria preciso encurtar a URL: renomear o repo
+  para um nome curto e codificar em maiúscula sem `https://` (vira modo
+  alfanumérico, 25 módulos), ou apontar `owen.com.br` para o Pages
+  (`OWEN.COM.BR/Q/1` = 21 módulos, o mínimo de um QR). Nada disso foi feito.
 
 ## Notion — controle de vendas
 
@@ -133,3 +147,25 @@ Ao mexer no Notion, corrigir o que ficou velho em vez de empilhar seção nova:
 informação desatualizada em runbook é pior que informação ausente. Exemplo já
 ocorrido: a Central afirmava que faltava ligar o sync depois de ele já estar
 ligado e testado.
+
+## A página de redirecionamento
+
+`index.html` aceita `?c=7`, `?c=007` e `?C=007` — normaliza para 3 dígitos, e o
+maiúsculo existe para permitir um QR em modo alfanumérico no futuro.
+
+Comportamento:
+
+| Situação | O que faz |
+| --- | --- |
+| destino cadastrado com `https://` | redireciona na hora |
+| destino vazio | mostra o número da plaquinha em letra grande |
+| destino sem `https://` | mostra "Destino inválido" em vez de quebrar |
+| código fora da faixa | mostra o número e avisa |
+| sem `?c=` | "Link incompleto" |
+
+O número é pintado antes do `fetch`, direto do parâmetro da URL, para aparecer
+mesmo com internet ruim — é assim que ele identifica a plaquinha na mão.
+
+Validado em Chromium via Playwright, 8 casos (`executable_path` em
+`/opt/pw-browsers/chromium-1194/chrome-linux/chrome`; o caminho sem versão não
+existe).
