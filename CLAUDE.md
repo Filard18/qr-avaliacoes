@@ -33,9 +33,36 @@ O NFC nunca guarda o destino do cliente. Consequência: ativar uma plaquinha no
 `redirects.json` atualiza QR e NFC ao mesmo tempo, sem tocar no chip. Não existe
 "subir para o NFC" — não há nada a subir.
 
-O único passo físico é gravar `?c=NNN` na tag, uma vez, na montagem. Rastreado
-pelas colunas `NFC gravado` e `Montada` do Notion (manuais: são estado físico,
-o sync não mexe nelas).
+O único passo físico é gravar `?c=NNN` na tag, uma vez, na montagem, e depois
+**proteger com senha**. Rastreado pelas colunas `NFC gravado` e `Montada` do
+Notion (manuais: são estado físico, o sync não mexe nelas).
+
+### Tag destravada aceita escrita de qualquer um
+
+Uma tag NFC sem proteção é regravável por qualquer pessoa com um celular e o
+NFC Tools, em segundos, sem senha nenhuma. Um concorrente pode apontar a
+plaquinha do cliente para a página dele, e não fica nenhum sinal visível —
+diferente de um adesivo colado sobre o QR, que se vê.
+
+Correção de uma orientação anterior deste arquivo: até 17/09/2026 aqui estava
+escrito "nunca bloquear a tag". Isso valia para o plano antigo, em que a tag
+guardaria a URL do cliente e precisaria ser trocada. No desenho atual a tag
+guarda `?c=NNN` e nunca muda, então deixá-la aberta não dá benefício algum.
+
+**Proteger com senha, não travar como somente leitura.** A senha barra
+estranho e mantém a tag corrigível; travar é irreversível e custa caro em dois
+cenários concretos:
+
+- Errar o número numa tag já embutida no plástico: sem correção possível, a
+  plaquinha inteira vira refugo. Em 200 repetições, erro humano acontece.
+- Migrar a URL (por exemplo apontar `owen.com.br` para o sistema, que
+  encurtaria o QR): exigiria regravar todas as tags. Travadas, perde-se o lote.
+
+Senha única para todo o lote, anotada fora daqui. Exige chip NTAG213/215/216 —
+conferir antes de comprar, tag genérica pode não ter a função.
+
+Ordem obrigatória na montagem: gravar, **conferir lendo de volta**, e só então
+proteger. Nunca proteger antes de conferir.
 
 Se ele pedir para "gravar o NFC do cliente X", a resposta é que já está feito
 pelo cadastro no JSON — e nunca sugerir gravar a URL do cliente direto na tag,
