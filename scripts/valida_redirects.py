@@ -29,9 +29,13 @@ for cod, reg in dados.items():
     if not re.fullmatch(r"\d{3}", cod):
         ERROS.append("%s: o codigo tem que ter exatamente 3 digitos" % onde)
     if not isinstance(reg, dict):
-        ERROS.append("%s: deveria ser um objeto com cliente e url" % onde)
+        ERROS.append("%s: deveria ser um objeto com o campo url" % onde)
         continue
-    sobrando = set(reg) - {"cliente", "url"}
+    if "cliente" in reg:
+        # este arquivo e publico: nome de cliente aqui entrega a carteira
+        ERROS.append("%s: nome de cliente nao entra neste arquivo, que e publico. "
+                     "O nome vive no Notion" % onde)
+    sobrando = set(reg) - {"url"}
     if sobrando:
         AVISOS.append("%s: campo desconhecido %s" % (onde, ", ".join(sorted(sobrando))))
     url = (reg.get("url") or "").strip()
@@ -41,8 +45,7 @@ for cod, reg in dados.items():
         if " " in url:
             ERROS.append("%s: a url tem espaco dentro" % onde)
         vistos_url.setdefault(url, []).append(cod)
-    elif (reg.get("cliente") or "").strip():
-        AVISOS.append("%s: tem cliente mas nao tem url - plaquinha nao funciona ainda" % onde)
+
 
 for url, codigos in vistos_url.items():
     if len(codigos) > 1:

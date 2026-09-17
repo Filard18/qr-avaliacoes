@@ -144,8 +144,13 @@ com Status "Piloto"). Não mover de volta: a escolha é dele.
 
 | Campo | Fonte da verdade |
 | --- | --- |
-| `Cliente`, `URL destino`, `Configurado no GitHub` | GitHub (`redirects.json`) |
-| `Status`, `Valor`, `Data da venda`, `Telefone`, `Observações` | Notion (editado à mão) |
+| `URL destino`, `Configurado no GitHub` | GitHub (`redirects.json`) |
+| `Cliente`, `Status`, `Valor`, `Data da venda`, `Telefone`, `Observações` | Notion |
+
+`Cliente` saiu do GitHub em 17/09/2026: o `redirects.json` é público e expor a
+lista de clientes entrega a carteira. O nome passou a ser escrito direto no
+Notion por quem ativa a plaquinha. Para o usuário nada mudou — ele manda a
+mesma mensagem e os dois lados são preenchidos.
 
 Exceção: um código que ganha destino no JSON e ainda está `Livre` vira
 `Vendida`, e a data da venda é preenchida se estiver vazia. Fora disso o sync
@@ -265,3 +270,18 @@ Quatro cores na mesma camada exigiriam AMS/MMU ou 4 trocas manuais. A prancha
 "Uma troca de filamento" mostra a versão toda preta, que produz com um swap só.
 O logo do Google é marca registrada — eles têm material oficial de avaliação com
 regras de uso, não conferido ainda.
+
+## O arquivo público não guarda nome de cliente
+
+`redirects.json` é servido publicamente pelo GitHub Pages e o repositório é
+público (tem que ser, senão o Pages não serve). Qualquer pessoa abre e lê.
+
+Por isso ele guarda só `{"NNN": {"url": "..."}}`. O nome do cliente vive
+exclusivamente no Notion. O validador trata o campo `cliente` como erro para
+que ele não volte por descuido.
+
+As URLs em si continuam visíveis, e isso é aceitável: são links públicos de
+avaliação dos próprios clientes. O que não é aceitável é a lista de quem são.
+
+Nenhum nome real chegou a ser commitado antes da mudança — o histórico está
+limpo, só tem um "TESTE SYNC - ignorar" de um teste de sincronia.

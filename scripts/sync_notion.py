@@ -2,10 +2,14 @@
 """Sincroniza o redirects.json com o banco "Controle de Plaquinhas" no Notion.
 
 Direcao unica, GitHub -> Notion, e so nos campos que o GitHub manda:
-  Cliente, URL destino, Configurado no GitHub.
+  URL destino e Configurado no GitHub.
 
-O que o Notion manda continua intocado: Valor, Data da venda, Telefone,
-Observacoes e o Status (com uma excecao: um codigo que acabou de ganhar
+O nome do cliente NAO passa por aqui de proposito: o redirects.json e publico,
+e uma lista de clientes exposta entrega a carteira para qualquer concorrente.
+O nome vive so no Notion, escrito direto por quem ativa a plaquinha.
+
+O que o Notion manda continua intocado: Cliente, Valor, Data da venda,
+Telefone, Observacoes e o Status (com uma excecao: um codigo que acabou de ganhar
 destino e ainda esta "Livre" vira "Vendida", e a data da venda e preenchida
 se estiver vazia). Assim a planilha de vendas nunca e sobrescrita.
 
@@ -32,9 +36,6 @@ def call(method, path, body=None):
     except urllib.error.HTTPError as e:
         detalhe = e.read().decode("utf-8", "replace")[:400]
         sys.exit("ERRO Notion %s em %s %s\n%s" % (e.code, method, path, detalhe))
-
-def texto(prop):
-    return "".join(t.get("plain_text", "") for t in (prop or {}).get("rich_text", []))
 
 def titulo(prop):
     return "".join(t.get("plain_text", "") for t in (prop or {}).get("title", []))
@@ -69,12 +70,10 @@ def main():
 
     for cod in sorted(destinos):
         dado = destinos[cod] or {}
-        cliente = (dado.get("cliente") or "").strip()
         url = (dado.get("url") or "").strip()
         configurado = bool(url)
 
         props = {
-            "Cliente": {"rich_text": [{"text": {"content": cliente}}] if cliente else []},
             "URL destino": {"url": url or None},
             "Configurado no GitHub": {"checkbox": configurado},
         }
@@ -88,12 +87,11 @@ def main():
                 props["Data da venda"] = {"date": {"start": hoje}}
             call("POST", "/pages", {"parent": {"database_id": DB_ID}, "properties": props})
             criadas += 1
-            print("  + %s criado%s" % (cod, " (%s)" % cliente if cliente else ""))
+            print("  + %s criado" % cod)
             continue
 
         atual = pg["properties"]
-        mudou = (texto(atual.get("Cliente")) != cliente
-                 or (atual.get("URL destino", {}).get("url") or "") != url
+        mudou = ((atual.get("URL destino", {}).get("url") or "") != url
                  or bool(atual.get("Configurado no GitHub", {}).get("checkbox")) != configurado)
 
         # promove a venda sem mexer em status que a pessoa ja ajustou a mao
@@ -109,7 +107,7 @@ def main():
         if mudou:
             call("PATCH", "/pages/%s" % pg["id"], {"properties": props})
             atualizadas += 1
-            print("  ~ %s atualizado%s" % (cod, " (%s)" % cliente if cliente else ""))
+            print("  ~ %s atualizado" % cod)
 
     print("pronto: %d criadas, %d atualizadas, %d sem mudanca"
           % (criadas, atualizadas, len(destinos) - criadas - atualizadas))
