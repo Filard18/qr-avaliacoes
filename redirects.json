@@ -596,7 +596,7 @@
     "url": ""
   },
   "150": {
-    "cliente": "",
-    "url": ""
+    "cliente": "TESTE SYNC - ignorar",
+    "url": "https://www.google.com"
   }
 }
