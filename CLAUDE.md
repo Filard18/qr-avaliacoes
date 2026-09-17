@@ -60,3 +60,57 @@ mudar de finalidade só editando o JSON.
   não é possível testar a URL daqui, só pelo navegador do usuário.
 - Ao validar QR gerado, usar `pyzbar` (precisa de `libzbar0` via apt). O
   `cv2.QRCodeDetector` dá falso negativo e acusa falha em QR perfeito.
+
+## Notion — controle de vendas
+
+Espelho do `redirects.json` para controle comercial. O GitHub continua sendo a
+fonte da verdade do destino de cada plaquinha; o Notion guarda o lado de venda.
+
+- Central: `Plaquinhas QR — Central`
+  https://app.notion.com/p/3decd23a97d48100bfbfd2944ad7054e
+- Banco `Controle de Plaquinhas` (150 linhas, 001 a 150)
+  https://app.notion.com/p/a74067e679374cea8aa7cd926f44c109
+- `database_id`: `a74067e679374cea8aa7cd926f44c109`
+- `data_source_id`: `1ed99f63-5b07-4769-9061-cf088c6ffe17`
+- Páginas filhas: `Passo a passo: vender e configurar`, `Problemas e soluções`
+
+Páginas privadas do usuário (workspace "Espaço de André Maciel"). Não mover
+para o Owen v2 nem para aba de clientes — ele pediu explicitamente que não.
+
+### Quem manda em cada campo
+
+| Campo | Fonte da verdade |
+| --- | --- |
+| `Cliente`, `URL destino`, `Configurado no GitHub` | GitHub (`redirects.json`) |
+| `Status`, `Valor`, `Data da venda`, `Telefone`, `Observações` | Notion (editado à mão) |
+
+Exceção: um código que ganha destino no JSON e ainda está `Livre` vira
+`Vendida`, e a data da venda é preenchida se estiver vazia. Fora disso o sync
+nunca sobrescreve dado de venda.
+
+`Link da plaquinha` é fórmula no Notion, calculada a partir do `Código`.
+Não preencher à mão.
+
+### Ao ativar uma plaquinha
+
+Depois do push no `redirects.json`, atualizar a linha do código no Notion
+(`Cliente`, `URL destino`, `Configurado no GitHub`, `Status`) — a não ser que
+o sync automático já esteja ligado, e aí o GitHub Actions faz isso.
+
+### Sync automático (GitHub Actions)
+
+`.github/workflows/sync-notion.yml` roda `scripts/sync_notion.py` a cada push
+que altera o `redirects.json`. Sem o segredo `NOTION_TOKEN` o script só avisa e
+sai com sucesso, sem falhar o workflow.
+
+Para ligar, o usuário precisa fazer 3 coisas (Claude não consegue, envolve
+credencial dele):
+1. Criar uma integração interna em https://www.notion.so/profile/integrations
+   e copiar o token (`ntn_...`)
+2. Em Settings → Secrets and variables → Actions do repositório, criar o
+   segredo `NOTION_TOKEN` com esse valor
+3. Na página `Controle de Plaquinhas`, menu `...` → `Connections` → adicionar
+   a integração criada
+
+O `NOTION_DATABASE_ID` já vem com valor padrão no workflow; só precisa de
+variável de repositório se o banco for trocado.
