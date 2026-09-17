@@ -11,16 +11,18 @@ cliente de uma plaquinha sem reimprimir o QR.
 - URL da plaquinha: `https://filard18.github.io/qr-avaliacoes/?c=NNN`
 - GitHub Pages: branch `main`, pasta raiz `/`
 - Códigos existentes no JSON: `001` a `150`
-- QR codes gerados: `001` a `150`, em `qrcodes/` (PNG) e `folha_qr_14mm_001-150.pdf`
+- QR codes gerados: `001` a `150`, em `qrcodes_svg/` (SVG em mm, para extrudar
+  no CAD — é o que a produção usa) e `qrcodes/` (PNG, só para conferência e tela)
 - Os QRs são **limpos**: nada impresso dentro nem fora. 33 módulos, correção de
   erro M, borda de 2 módulos.
 - **Quem identifica a plaquinha é a página**, não o QR: escaneando um código
   ainda não configurado, o `index.html` mostra o número em letra grande. Foi a
-  escolha dele em 17/09/2026, melhor que o rótulo dentro do QR — que em 14 mm
-  ficaria com 1 mm de altura.
-- Tamanho de impressão: **14 mm** de lado. O piso medido é 13 mm (abaixo disso
-  falha em impressão de baixa qualidade); 14 mm dá margem. Nunca reduzir abaixo
-  de 13 mm com esta URL.
+  escolha dele em 17/09/2026, melhor que o rótulo dentro do QR — que ficaria
+  ilegível nos tamanhos pequenos que se cogitou antes.
+- Tamanho na peça: **32 mm** de lado, impresso em 3D junto com a plaquinha.
+  Ver "A plaquinha física" no fim deste arquivo para o porquê — não é o mesmo
+  piso de um adesivo em papel (que seria 13 mm), porque em 3D o limite é a
+  largura da linha de extrusão, não a tinta.
 
 ## NFC e QR: o mesmo código
 
@@ -87,7 +89,8 @@ mudar de finalidade só editando o JSON.
   celular atual. Abaixo de ~0,35 mm por módulo começa a falhar em impressão
   ruim. Ao testar, simular espalhamento em mm e reamostrar na resolução que o
   celular resolve; medir só em imagem digital perfeita engana.
-- Para descer abaixo de 13 mm seria preciso encurtar a URL: renomear o repo
+- Para descer abaixo de 32 mm em 3D (ou de 13 mm em adesivo) seria preciso
+  encurtar a URL: renomear o repo
   para um nome curto e codificar em maiúscula sem `https://` (vira modo
   alfanumérico, 25 módulos), ou apontar `owen.com.br` para o Pages
   (`OWEN.COM.BR/Q/1` = 21 módulos, o mínimo de um QR). Nada disso foi feito.
@@ -203,6 +206,11 @@ uma única troca de filamento (M600) pinta os seis.
 | www.owen.com.br | letra 5 mm | 136 |
 
 Design: https://claude.ai/artifact/SpgybncKHcq55XL6dMkVLt
+
+Arte do QR para a produção: `qrcodes_svg/NNN.svg`. Unidade do viewBox = 1 mm,
+arquivo já em 32 x 32 mm, para importar 1:1 e extrudar. O retângulo vermelho
+`limite-nao-extrudar` marca a borda externa: é referência de posicionamento,
+não entra na extrusão.
 
 ### Limites que não se mexe
 
