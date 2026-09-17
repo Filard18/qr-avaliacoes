@@ -74,8 +74,10 @@ fonte da verdade do destino de cada plaquinha; o Notion guarda o lado de venda.
 - `data_source_id`: `1ed99f63-5b07-4769-9061-cf088c6ffe17`
 - Páginas filhas: `Passo a passo: vender e configurar`, `Problemas e soluções`
 
-Páginas privadas do usuário (workspace "Espaço de André Maciel"). Não mover
-para o Owen v2 nem para aba de clientes — ele pediu explicitamente que não.
+Workspace "Espaço de André Maciel". Criadas como página privada porque ele
+pediu que não fossem para a aba de clientes do Owen V2; depois ele mesmo moveu
+a Central para lá (hoje é uma linha do banco `Clientes`, em `Owen V2/Clientes`,
+com Status "Piloto"). Não mover de volta: a escolha é dele.
 
 ### Quem manda em cada campo
 
@@ -114,3 +116,20 @@ credencial dele):
 
 O `NOTION_DATABASE_ID` já vem com valor padrão no workflow; só precisa de
 variável de repositório se o banco for trocado.
+
+## Manter o Notion atualizado
+
+Ele autorizou (17/09/2026) adicionar ao Notion, sem precisar perguntar a cada
+vez, toda informação nova que for importante ou pertinente para a operação.
+
+Vale para: mudança de estado (o que está no ar, o que foi validado, quantos
+códigos existem, quantos foram impressos), decisão tomada, procedimento novo,
+e armadilha descoberta.
+
+Não vale para: detalhe técnico que só serve para quem mexe no código (fica
+neste arquivo), nem rascunho ou hipótese ainda não confirmada.
+
+Ao mexer no Notion, corrigir o que ficou velho em vez de empilhar seção nova:
+informação desatualizada em runbook é pior que informação ausente. Exemplo já
+ocorrido: a Central afirmava que faltava ligar o sync depois de ele já estar
+ligado e testado.
