@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Redirecionando...</title>
+</head>
+<body>
+<p id="msg">Redirecionando...</p>
+<script>
+const c = new URLSearchParams(location.search).get('c');
+fetch('./redirects.json?' + Date.now())
+  .then(r => r.json())
+  .then(d => {
+    if (c && d[c] && d[c].url) {
+      location.replace(d[c].url);
+    } else {
+      document.getElementById('msg').innerText = 'Código não configurado ainda.';
+    }
+  })
+  .catch(() => {
+    document.getElementById('msg').innerText = 'Erro ao carregar. Tente novamente.';
+  });
+</script>
+</body>
+</html>
