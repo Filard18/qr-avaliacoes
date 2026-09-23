@@ -329,6 +329,25 @@ avaliação dos próprios clientes. O que não é aceitável é a lista de quem 
 Nenhum nome real chegou a ser commitado antes da mudança — o histórico está
 limpo, só tem um "TESTE SYNC - ignorar" de um teste de sincronia.
 
+## A tela só aparece quando há algo a dizer
+
+Mudado em 23/09/2026, a pedido dele: escaneando uma plaquinha já vendida, o
+cliente via o número dela piscar antes de o Google abrir.
+
+Regra atual do `index.html`: o cartão nasce com `.oculto` e só é revelado por
+`painel()`. Uma plaquinha configurada termina em `location.replace` sem desenhar
+nada. O número aparece em quatro casos — plaquinha livre, destino inválido,
+falha de rede e o modo `&v=1` — mais um quinto: se o `redirects.json` passar de
+1,2 s, o número entra junto do "Abrindo…". Esse quinto é o que mantém a
+identificação da peça na montagem quando a internet está ruim.
+
+**Não volte a pintar o número antes do fetch.** Era assim antes, e cobrava o
+flash de toda leitura de cliente para servir um caso que só acontece na bancada.
+
+Efeito colateral aceito: uma plaquinha **já configurada** não diz mais o próprio
+número ao encostar o celular. Para identificar uma dessas, a aba **Ler** do NFC
+Tools mostra o conteúdo cru da tag (`...?c=NNN`) sem abrir o link.
+
 ## Como ele manda uma venda
 
 Combinado em 23/09/2026. A mensagem vem assim, e nada mais:
