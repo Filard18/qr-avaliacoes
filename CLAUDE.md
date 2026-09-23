@@ -84,6 +84,29 @@ Ao testar no iPhone: a antena fica no topo das costas do aparelho, a tela
 precisa estar ligada e desbloqueada, e câmera ou carteira abertas capturam o
 NFC antes do sistema.
 
+### "Erro durante o processo de escrita": a lista do NFC Tools acumula
+
+Aconteceu em 23/09/2026, nas tags 003 e 009. **As tags estavam boas** — erro de
+operação, não de hardware. É o primeiro lugar a olhar quando ele relatar falha
+de gravação.
+
+O "Adicionar um registro" do NFC Tools **acrescenta** à lista, não substitui.
+Gravando uma plaquinha atrás da outra sem limpar, a lista acumula.
+
+A conta: cada registro de URL `.../?c=NNN` ocupa **44 bytes**; a NTAG213 tem
+**144**. Então a 4ª gravação seguida (176 bytes) estoura e dá erro — exatamente
+o que aconteceu (004, 002, 005 gravaram; 003 e 009 falharam, com a tela
+mostrando `Escrever / 220 Bytes` = 5 registros).
+
+O estrago maior não é o erro, é o silêncio antes dele: **002 e 005 gravaram com
+sucesso carregando também os registros anteriores.** Tag com vários registros
+faz o celular abrir o **primeiro** — as duas mandavam o cliente para o destino
+da 004. Grava, diz "concluído", e a plaquinha sai errada.
+
+**Defesa permanente: o botão de gravar tem que dizer `44 Bytes`.** Qualquer
+número maior (88, 132, 176...) significa lixo na lista. É a verificação mais
+barata que existe aqui — um número só, antes de cada gravação.
+
 Se ele pedir para "gravar o NFC do cliente X", a resposta é que já está feito
 pelo cadastro no JSON — e nunca sugerir gravar a URL do cliente direto na tag,
 que é o que quebraria o sistema desse lado.
