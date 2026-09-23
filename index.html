@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Redirecionando…</title>
+<!-- destino mais comum: adianta o handshake enquanto o redirects.json carrega -->
+<link rel="preconnect" href="https://search.google.com">
 <style>
   :root { color-scheme: light dark; }
   * { box-sizing: border-box; }
@@ -31,7 +33,8 @@
 </style>
 </head>
 <body>
-<div class="caixa">
+<!-- nasce escondido: numa plaquinha ja configurada o cliente nunca ve esta tela -->
+<div class="caixa oculto" id="caixa">
   <p class="rotulo" id="rotulo">Plaquinha</p>
   <p class="cod" id="cod">—</p>
   <p class="msg" id="msg">Abrindo…</p>
@@ -49,27 +52,45 @@
   var cod = bruto.trim().replace(/\D/g, "");          // so digitos
   if (cod) cod = String(parseInt(cod, 10)).padStart(3, "0");
 
+  var elCaixa = document.getElementById("caixa");
   var elCod = document.getElementById("cod");
   var elMsg = document.getElementById("msg");
   var elNota = document.getElementById("nota");
   var elRot = document.getElementById("rotulo");
+  var espera = 0;
 
-  function mostra(msg, nota) {
+  // a tela so aparece quando ha algo a dizer. O caminho normal de uma
+  // plaquinha vendida termina em location.replace sem nunca chamar isto,
+  // e por isso o cliente nao ve mais o numero piscar antes do Google.
+  function painel(msg, nota, comNumero, rotulo) {
+    clearTimeout(espera);
+    if (comNumero) {
+      elRot.classList.remove("oculto");
+      elCod.classList.remove("oculto");
+      elRot.textContent = rotulo || "Plaquinha";
+      elCod.textContent = cod;
+      document.title = "Plaquinha " + cod;
+    } else {
+      elRot.classList.add("oculto");
+      elCod.classList.add("oculto");
+    }
     elMsg.textContent = msg;
     elNota.textContent = nota || "";
+    elCaixa.classList.remove("oculto");
   }
 
   if (!cod) {
-    elRot.classList.add("oculto");
-    elCod.classList.add("oculto");
-    mostra("Link incompleto", "Escaneie o QR code da plaquinha novamente.");
+    painel("Link incompleto", "Escaneie o QR code da plaquinha novamente.", false);
     return;
   }
 
-  // o numero aparece na hora, antes de qualquer rede: e assim que se
-  // identifica qual plaquinha e esta, mesmo sem internet boa
-  elCod.textContent = cod;
-  document.title = "Plaquinha " + cod;
+  // Rede lenta: ai sim mostra o numero. E assim que se identifica uma
+  // plaquinha na montagem (e quando a caixa vira), e a essa altura ja se
+  // passou tempo demais para parecer um flash. No 4G comum o redirects.json
+  // chega bem antes disto e nada e desenhado.
+  espera = setTimeout(function () {
+    painel("Abrindo…", "", true);
+  }, 1200);
 
   fetch("./redirects.json?" + Date.now(), { cache: "no-store" })
     .then(function (r) {
@@ -81,23 +102,23 @@
       var url = reg && typeof reg.url === "string" ? reg.url.trim() : "";
       if (/^https?:\/\//i.test(url)) {
         if (conferir) {
-          elRot.textContent = "Plaquinha (conferência)";
-          mostra("Configurada e no ar", url);
+          painel("Configurada e no ar", url, true, "Plaquinha (conferência)");
           return;
         }
+        clearTimeout(espera);
         location.replace(url);
         return;
       }
       if (url) {
-        mostra("Destino inválido", "O link cadastrado precisa começar com https://");
+        painel("Destino inválido", "O link cadastrado precisa começar com https://", true);
         return;
       }
-      mostra("Ainda não configurada", reg
+      painel("Ainda não configurada", reg
         ? "Esta plaquinha está livre. Cadastre o destino no redirects.json."
-        : "Código fora da faixa cadastrada.");
+        : "Código fora da faixa cadastrada.", true);
     })
     .catch(function () {
-      mostra("Não foi possível carregar", "Verifique a conexão e tente de novo.");
+      painel("Não foi possível carregar", "Verifique a conexão e tente de novo.", true);
     });
 })();
 </script>
