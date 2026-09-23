@@ -64,6 +64,26 @@ conferir antes de comprar, tag genérica pode não ter a função.
 Ordem obrigatória na montagem: gravar, **conferir lendo de volta**, e só então
 proteger. Nunca proteger antes de conferir.
 
+### Tag sem gravar: Android avisa, iPhone fica mudo
+
+Constatado em 23/09/2026 nas 10 primeiras plaquinhas. É normal, não é defeito:
+o iPhone só reage a tag com NDEF válido (na prática, registro de URL) e ignora
+tag vazia em silêncio; o Android avisa que está vazia.
+
+Se ele relatar "iPhone não faz nada", a resposta depende do estado da tag:
+
+- **Ainda não gravada** → esperado, nada a investigar. E o Android dizendo
+  "vazia" já prova que o chip está vivo, que o sinal atravessa o plástico na
+  espessura usada e que a tag está bem posicionada — os três riscos reais da
+  montagem.
+- **Já gravada e ainda mudo** → quase sempre o registro foi gravado como
+  "Texto" em vez de "URL/URI". O Android mostra os dois; o iPhone só abre URL.
+  Depois disso, conferir se o chip é NTAG213/215/216.
+
+Ao testar no iPhone: a antena fica no topo das costas do aparelho, a tela
+precisa estar ligada e desbloqueada, e câmera ou carteira abertas capturam o
+NFC antes do sistema.
+
 Se ele pedir para "gravar o NFC do cliente X", a resposta é que já está feito
 pelo cadastro no JSON — e nunca sugerir gravar a URL do cliente direto na tag,
 que é o que quebraria o sistema desse lado.
