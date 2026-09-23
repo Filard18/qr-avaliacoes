@@ -328,3 +328,37 @@ avaliação dos próprios clientes. O que não é aceitável é a lista de quem 
 
 Nenhum nome real chegou a ser commitado antes da mudança — o histórico está
 limpo, só tem um "TESTE SYNC - ignorar" de um teste de sincronia.
+
+## Como ele manda uma venda
+
+Combinado em 23/09/2026. A mensagem vem assim, e nada mais:
+
+```
+007, Zilda Verdurão, ChIJxxxxxxxxxxxxx
+```
+
+Número da placa, nome do local, **Place ID puro**. Ele não monta a URL — você monta:
+
+```
+https://search.google.com/local/writereview?placeid=<PLACE_ID>
+```
+
+Motivo da escolha: no computador dele o Place ID sai em um passo (Place ID
+Finder, ou a janelinha de "Escrever uma avaliação"), enquanto montar a URL à
+mão é onde ele errava — mandava a URL da página de busca do Google, que cai
+numa lista de resultados em vez do formulário de estrelas.
+
+O que fazer com cada parte:
+
+| Vem | Vai para |
+|---|---|
+| número | a chave no `redirects.json` |
+| Place ID | vira a URL, e só a URL entra no `redirects.json` |
+| nome do local | **só no Notion**, coluna `Cliente` — nunca no repo, que é público |
+
+Se ele mandar uma URL pronta no lugar do Place ID (`g.page/r/.../review` ou
+qualquer outra), use como veio. Só confira que começa com `https://`.
+
+Um link de avaliação válido sempre tem `writereview` ou é um
+`g.page/r/.../review`. Um `google.com/search?q=` ou `maps.app.goo.gl` **não
+serve** — abre a página do negócio, não o formulário. Recuse e peça o Place ID.
