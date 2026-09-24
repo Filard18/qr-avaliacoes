@@ -1,0 +1,22 @@
+name: Vigia as plaquinhas que estao na rua
+
+# De 2 em 2 horas. Quando falha, o GitHub manda e-mail para o dono do
+# repositorio: e esse o alarme. Sem isto, so um cliente reclamando avisaria.
+on:
+  schedule:
+    - cron: "17 */2 * * *"     # minuto 17 para nao cair no pico da hora cheia
+  workflow_dispatch:            # botao "Run workflow" para conferir na hora
+  push:
+    paths:
+      - "redirects.json"        # depois de configurar uma venda, confere se subiu
+      - "index.html"
+      - "scripts/monitora_site.py"
+      - ".github/workflows/monitora.yml"
+
+jobs:
+  vigia:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confere se as plaquinhas da rua estao funcionando
+        run: python3 scripts/monitora_site.py
