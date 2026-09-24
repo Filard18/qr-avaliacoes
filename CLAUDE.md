@@ -348,6 +348,25 @@ Efeito colateral aceito: uma plaquinha **já configurada** não diz mais o próp
 número ao encostar o celular. Para identificar uma dessas, a aba **Ler** do NFC
 Tools mostra o conteúdo cru da tag (`...?c=NNN`) sem abrir o link.
 
+## Nunca diga "no ar" antes de o GitHub Pages publicar
+
+Errado em 24/09/2026: avisei que a 010 estava no ar logo depois do push, ele
+testou e viu "Ainda não configurada". Nada estava quebrado — o push foi
+13:56:10, o Pages só terminou 13:57:11. Ele pegou o minuto morto.
+
+O push termina em segundos; a publicação leva de **40 s a 2 min**. São coisas
+diferentes e o push não espera pela outra.
+
+Antes de dizer que uma plaquinha está no ar, confirme o run
+**"pages build and deployment"** daquele SHA com `conclusion: success` (a API
+de Actions responde isto, e a sessão tem acesso). O run do sync com o Notion
+terminar **não** significa que o site publicou: ele costuma acabar primeiro.
+
+Esta sessão não alcança `filard18.github.io` (a rede bloqueia), então o teste
+final é sempre dele — mas o "pode testar" só sai depois do verde do Pages.
+
+Para ele conferir sem redirecionar: `?c=NNN&v=1` mostra o estado da plaquinha.
+
 ## Como ele manda uma venda
 
 Combinado em 23/09/2026, ampliado em 24/09. A mensagem vem assim, e nada mais:
