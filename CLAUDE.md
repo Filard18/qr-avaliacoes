@@ -350,13 +350,14 @@ Tools mostra o conteúdo cru da tag (`...?c=NNN`) sem abrir o link.
 
 ## Como ele manda uma venda
 
-Combinado em 23/09/2026. A mensagem vem assim, e nada mais:
+Combinado em 23/09/2026, ampliado em 24/09. A mensagem vem assim, e nada mais:
 
 ```
-007, Zilda Verdurão, ChIJxxxxxxxxxxxxx
+007, Zilda Verdurão, ChIJxxxxxxxxxxxxx, B
 ```
 
-Número da placa, nome do local, **Place ID puro**. Ele não monta a URL — você monta:
+Número da placa, nome do local, **Place ID puro**, e a cor. Ele não monta a
+URL — você monta:
 
 ```
 https://search.google.com/local/writereview?placeid=<PLACE_ID>
@@ -367,13 +368,35 @@ Finder, ou a janelinha de "Escrever uma avaliação"), enquanto montar a URL à
 mão é onde ele errava — mandava a URL da página de busca do Google, que cai
 numa lista de resultados em vez do formulário de estrelas.
 
-O que fazer com cada parte:
+### A letra da cor, depois da vírgula
+
+| Letra | Cor |
+|---|---|
+| `B` ou `b` | Branca |
+| `P` ou `p` | Preta |
+| `D` ou `d` | Outra (diferente das duas) |
+
+Vai na coluna `Cor` do Notion. Com `D`, marque `Outra` — a cor exata ele
+preenche lá. **Sem letra, deixe a coluna vazia**, não chute: ele preenche as
+cores no fim do dia.
+
+### Mais de uma plaquinha para o mesmo cliente
+
+`005 e 002, Drogaria Mais Vida, ChIJ...` significa duas plaquinhas com o
+**mesmo destino**, para pontos diferentes da mesma loja.
+
+Nesse caso não basta repetir a URL: o validador barra destino repetido de
+propósito, porque repetição acidental é a plaquinha de um cliente apontando
+para a de outro. Declare o par em `grupos_compartilhados.json` antes do push.
+
+### O que fazer com cada parte
 
 | Vem | Vai para |
 |---|---|
 | número | a chave no `redirects.json` |
 | Place ID | vira a URL, e só a URL entra no `redirects.json` |
 | nome do local | **só no Notion**, coluna `Cliente` — nunca no repo, que é público |
+| letra da cor | **só no Notion**, coluna `Cor` |
 
 Se ele mandar uma URL pronta no lugar do Place ID (`g.page/r/.../review` ou
 qualquer outra), use como veio. Só confira que começa com `https://`.
@@ -381,3 +404,9 @@ qualquer outra), use como veio. Só confira que começa com `https://`.
 Um link de avaliação válido sempre tem `writereview` ou é um
 `g.page/r/.../review`. Um `google.com/search?q=` ou `maps.app.goo.gl` **não
 serve** — abre a página do negócio, não o formulário. Recuse e peça o Place ID.
+
+### Pagamento
+
+A coluna `Pagamento` (Pago / A pagar / Cortesia) é do Notion e o sync nunca
+mexe nela. Quando ele disser que vai receber depois, marque **A pagar** e
+registre a data combinada nas Observações.
