@@ -367,6 +367,52 @@ final é sempre dele — mas o "pode testar" só sai depois do verde do Pages.
 
 Para ele conferir sem redirecionar: `?c=NNN&v=1` mostra o estado da plaquinha.
 
+## O vigia das plaquinhas
+
+Ligado em 24/09/2026, a pedido dele: "se qualquer NTAG parar de rodar ou QR
+code devemos ser avisados, mas nunca deve parar de rodar".
+
+`.github/workflows/monitora.yml` roda `scripts/monitora_site.py` de 2 em 2
+horas, a cada push que mexe no `redirects.json` ou no `index.html`, e no botão
+manual. **Quando falha, o GitHub manda e-mail para ele.** É esse o alarme, e é
+por isso que o script tem que falhar alto: um `exit 0` silencioso vira
+monitoramento de mentira.
+
+Três camadas, da mais grave para a menos:
+
+| Camada | Se quebrar |
+|---|---|
+| a página responde e ainda é o redirecionador | todas as plaquinhas param |
+| o `redirects.json` publicado carrega, é válido e bate com o repo | todas param |
+| o destino de cada cliente responde | só aquela plaquinha |
+
+**A regra que não pode ser afrouxada: falso alarme é pior que nenhum alarme.**
+Se ele parar de confiar no e-mail, o monitor deixou de existir. Por isso a
+camada 3 só falha em 404 e 410; 403 e 429 (Google bloqueando o runner), 5xx e
+timeout viram aviso. Não transforme aviso em falha sem um motivo forte.
+
+A camada 2 reconfere depois de 90 s antes de acusar divergência, porque logo
+após um push o Pages ainda não publicou e a diferença é normal.
+
+Testado com dez cenários simulados por servidor local (`ESPERA_REPUBLICACAO` e
+`ESPERA_ENTRE_DESTINOS` encurtam as esperas). A primeira execução real, em
+24/09/2026 18:12, achou as 7 plaquinhas configuradas respondendo 200 — o Google
+não bloqueou o runner.
+
+### O que ele não enxerga
+
+Tag NFC danificada, QR riscado ou coberto, plaquinha que caiu da parede. Nada
+disso aparece pela internet, só em teste físico. Quando ele perguntar "está
+tudo funcionando?", a resposta honesta separa as duas coisas: o sistema, sim,
+o monitor confirma; a peça na parede do cliente, só ele indo lá ou perguntando.
+
+### Cuidado com o próprio vigia
+
+O GitHub desativa workflow agendado em repositório sem atividade por 60 dias.
+Como cada venda gera um push, na prática não acontece — mas se as vendas
+pararem, o monitor para junto e ninguém avisa. Se ele sumir por muito tempo e
+voltar, confira se o workflow continua ativo.
+
 ## Como ele manda uma venda
 
 Combinado em 23/09/2026, ampliado em 24/09. A mensagem vem assim, e nada mais:
