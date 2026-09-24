@@ -407,6 +407,17 @@ serve** — abre a página do negócio, não o formulário. Recuse e peça o Pla
 
 ### Pagamento
 
-A coluna `Pagamento` (Pago / A pagar / Cortesia) é do Notion e o sync nunca
-mexe nela. Quando ele disser que vai receber depois, marque **A pagar** e
-registre a data combinada nas Observações.
+Duas colunas separadas, as duas do Notion, as duas intocadas pelo sync:
+
+| Coluna | Responde | Opções |
+|---|---|---|
+| `Pagamento` | já entrou? | Pago, A pagar, Cortesia |
+| `Forma de pagamento` | como entrou? | Pix, Dinheiro, Débito, Crédito, Outra |
+
+Quando ele disser que vai receber depois, marque **A pagar** e registre a data
+combinada nas Observações. A forma de pagamento ele mesmo preenche no fim do
+dia, junto da cor — **não chute nenhuma das duas.**
+
+As colunas que são dele e o sync nunca sobrescreve: `Cliente`, `Status`,
+`Valor`, `Data da venda`, `Telefone`, `Observações`, `Cor`, `Pagamento`,
+`Forma de pagamento`.
