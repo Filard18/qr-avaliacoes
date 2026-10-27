@@ -1,19 +1,23 @@
-name: Confere o redirects.json e sincroniza com o Notion
+name: Confere o redirects.json
 
 # Roda sozinho a cada alteracao no redirects.json publicada na main,
 # e tambem pode ser disparado na mao pela aba Actions.
+#
+# O envio para o Notion foi desligado em 27/10/2026: a sociedade acabou e o
+# controle de venda saiu do Notion. O script scripts/sync_notion.py fica no
+# repo como historico, mas nao roda mais sozinho. Para religar, bastaria
+# devolver o passo "Enviar destinos para o Notion" e o segredo NOTION_TOKEN.
 on:
   push:
     branches: [main]
     paths:
       - redirects.json
-      - scripts/sync_notion.py
       - scripts/valida_redirects.py
       - .github/workflows/sync-notion.yml
   workflow_dispatch:
 
 jobs:
-  sync:
+  confere:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,14 +26,7 @@ jobs:
         with:
           python-version: '3.12'
 
-      # roda antes do sync: um JSON invalido derruba TODAS as plaquinhas de
-      # uma vez, entao o aviso tem que chegar rapido - e nao faz sentido
-      # sincronizar um arquivo quebrado com o Notion
+      # um JSON invalido derruba TODAS as plaquinhas de uma vez, entao o aviso
+      # tem que chegar rapido
       - name: Conferir o redirects.json
         run: python3 scripts/valida_redirects.py
-
-      - name: Enviar destinos para o Notion
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DATABASE_ID: ${{ vars.NOTION_DATABASE_ID || 'a74067e679374cea8aa7cd926f44c109' }}
-        run: python3 scripts/sync_notion.py

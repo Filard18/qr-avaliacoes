@@ -5,6 +5,28 @@ Cada plaquinha tem um código de 3 dígitos; o QR aponta sempre para a mesma
 URL e o destino real é decidido pelo `redirects.json`. Isso permite trocar o
 cliente de uma plaquinha sem reimprimir o QR.
 
+## O controle de vendas saiu do Notion (27/10/2026)
+
+A sociedade com o André acabou. A partir desta data **nada de plaquinha ou de
+site vai para o Notion** — nem por uma sessão do Claude, nem pelo sync
+automático. O controle de venda agora é uma planilha dele, 100% dele.
+
+Exceção, válida só quando ele pedir na hora: cliente que ele e o André têm em
+comum. Aí ele diz "isso pode pôr no Notion". Sem esse pedido explícito, não vai.
+
+O que muda na prática:
+
+- O `redirects.json` segue igual, e segue sendo a fonte da verdade do destino.
+- O passo "atualizar a linha no Notion" morreu. No lugar dele: devolver a linha
+  pronta para ele colar na planilha — número, cliente, cor, valor, forma de
+  pagamento e o link de avaliação.
+- O workflow `sync-notion.yml` não escreve mais no Notion; ficou só com a
+  conferência do `redirects.json`, que era a parte que importava.
+- Não existe mais rateio de sócio: o resultado é todo dele.
+
+As seções abaixo que mandam preencher o Notion valem como registro do que foi
+feito até 27/10/2026. Não seguir mais o passo a passo delas.
+
 ## Dados fixos
 
 - Repo: `Filard18/qr-avaliacoes` (público)
@@ -166,6 +188,10 @@ mudar de finalidade só editando o JSON.
   (`OWEN.COM.BR/Q/1` = 21 módulos, o mínimo de um QR). Nada disso foi feito.
 
 ## Notion — controle de vendas
+
+> **Suspenso em 27/10/2026.** Ver "O controle de vendas saiu do Notion" no
+> começo deste arquivo. O que vem abaixo é histórico: descreve como funcionava
+> enquanto a sociedade existia.
 
 Espelho do `redirects.json` para controle comercial. O GitHub continua sendo a
 fonte da verdade do destino de cada plaquinha; o Notion guarda o lado de venda.
