@@ -504,9 +504,28 @@ O controle de venda vive no Google Drive da conta dele, num arquivo chamado
 do Drive; o id do arquivo **não entra aqui**, porque este repo é público e a
 planilha tem a carteira de clientes inteira.
 
-Colunas, nesta ordem: `Nº da plaquinha`, `Cliente`, `Cor`, `Valor`,
-`Pagamento`, `Forma de pagamento`, `Data da venda`, `Place ID`,
+Quatro abas: `Resumo` (só fórmula, soma as outras), `Plaquinhas`, `Sites` e
+`Caixa`. Em todas, o cabeçalho é a linha 1 e os dados começam na linha 2.
+
+Colunas da aba `Plaquinhas`, nesta ordem: `Nº da plaquinha`, `Cliente`, `Cor`,
+`Valor`, `Pagamento`, `Forma de pagamento`, `Data da venda`, `Place ID`,
 `Link de avaliação (Google)`, `Observações`.
+
+Uma venda mexe em duas abas: a linha em `Plaquinhas` e a entrada em `Caixa`
+(`Tipo` = Entrada, `Categoria` = Plaquinha). Plaquinha de cortesia entra com
+valor 0 e `Pagamento` = Pago, para não cair em "a receber" — e **não** entra
+no `Caixa`, porque não houve dinheiro.
+
+### A planilha é pt-BR: separador é ponto e vírgula
+
+A planilha está em `locale: pt_BR` (data `dd/mm/aaaa`, vírgula decimal, R$).
+Nessa configuração o Google Sheets **recusa vírgula** como separador de
+argumento. `=COUNTIF(A2:A9,"x")` devolve `#ERROR!`; o certo é
+`=COUNTIF(A2:A9;"x")`.
+
+Escrevi todas as fórmulas com vírgula na primeira tentativa e as doze deram
+erro de uma vez. `=SUM(...)` passou porque tem um argumento só, o que faz o
+problema parecer menor do que é. Ao escrever fórmula aqui, **ponto e vírgula**.
 
 O número da plaquinha é texto, não número: `001`, não `1`. Escrevendo pela API
 do Sheets, mande com apóstrofo na frente (`'011`) ou o valor vira 1.
