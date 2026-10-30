@@ -56,8 +56,9 @@ O NFC nunca guarda o destino do cliente. Consequência: ativar uma plaquinha no
 "subir para o NFC" — não há nada a subir.
 
 O único passo físico é gravar `?c=NNN` na tag, uma vez, na montagem, e depois
-**proteger com senha**. Rastreado pelas colunas `NFC gravado` e `Montada` do
-Notion (manuais: são estado físico, o sync não mexe nelas).
+**proteger com senha**. Isso era rastreado em duas colunas do Notion; hoje não
+é rastreado em lugar nenhum. É estado físico, ele sabe de cabeça quais estão
+gravadas — se um dia virar problema, as colunas vão na planilha dele.
 
 ### Tag destravada aceita escrita de qualquer um
 
@@ -346,8 +347,8 @@ regras de uso, não conferido ainda.
 público (tem que ser, senão o Pages não serve). Qualquer pessoa abre e lê.
 
 Por isso ele guarda só `{"NNN": {"url": "..."}}`. O nome do cliente vive
-exclusivamente no Notion. O validador trata o campo `cliente` como erro para
-que ele não volte por descuido.
+exclusivamente na planilha dele. O validador trata o campo `cliente` como erro
+para que ele não volte por descuido.
 
 As URLs em si continuam visíveis, e isso é aceitável: são links públicos de
 avaliação dos próprios clientes. O que não é aceitável é a lista de quem são.
@@ -467,9 +468,9 @@ numa lista de resultados em vez do formulário de estrelas.
 | `P` ou `p` | Preta |
 | `D` ou `d` | Outra (diferente das duas) |
 
-Vai na coluna `Cor` do Notion. Com `D`, marque `Outra` — a cor exata ele
-preenche lá. **Sem letra, deixe a coluna vazia**, não chute: ele preenche as
-cores no fim do dia.
+Vai na coluna `Cor` da planilha dele. Com `D`, escreva `Outra` — a cor exata
+ele preenche lá. **Sem letra, deixe a coluna vazia**, não chute: ele preenche
+as cores no fim do dia.
 
 ### Mais de uma plaquinha para o mesmo cliente
 
@@ -486,8 +487,8 @@ para a de outro. Declare o par em `grupos_compartilhados.json` antes do push.
 |---|---|
 | número | a chave no `redirects.json` |
 | Place ID | vira a URL, e só a URL entra no `redirects.json` |
-| nome do local | **só no Notion**, coluna `Cliente` — nunca no repo, que é público |
-| letra da cor | **só no Notion**, coluna `Cor` |
+| nome do local | **só na planilha dele**, coluna `Cliente` — nunca no repo, que é público |
+| letra da cor | **só na planilha dele**, coluna `Cor` |
 
 Se ele mandar uma URL pronta no lugar do Place ID (`g.page/r/.../review` ou
 qualquer outra), use como veio. Só confira que começa com `https://`.
@@ -496,9 +497,27 @@ Um link de avaliação válido sempre tem `writereview` ou é um
 `g.page/r/.../review`. Um `google.com/search?q=` ou `maps.app.goo.gl` **não
 serve** — abre a página do negócio, não o formulário. Recuse e peça o Place ID.
 
+### Onde fica a planilha
+
+O controle de venda vive no Google Drive da conta dele, num arquivo chamado
+**`Controle Rafael — Plaquinhas e Sites`**. Procure por esse nome com a busca
+do Drive; o id do arquivo **não entra aqui**, porque este repo é público e a
+planilha tem a carteira de clientes inteira.
+
+Colunas, nesta ordem: `Nº da plaquinha`, `Cliente`, `Cor`, `Valor`,
+`Pagamento`, `Forma de pagamento`, `Data da venda`, `Place ID`,
+`Link de avaliação (Google)`, `Observações`.
+
+O número da plaquinha é texto, não número: `001`, não `1`. Escrevendo pela API
+do Sheets, mande com apóstrofo na frente (`'011`) ou o valor vira 1.
+
+Com o conector do Google Sheets ligado na sessão, escreva a linha direto na
+planilha. Sem ele, devolva a linha pronta no chat para ele colar — não é
+motivo para deixar de registrar.
+
 ### Pagamento
 
-Duas colunas separadas, as duas do Notion, as duas intocadas pelo sync:
+Duas colunas separadas, as duas na planilha dele:
 
 | Coluna | Responde | Opções |
 |---|---|---|
